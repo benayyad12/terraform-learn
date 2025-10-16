@@ -26,6 +26,10 @@ terraform apply => requires confirmation to make the changes
 
 terraform show => shows the created resource
 
+terraform refresh => get current state
+
+terraform destroy => destroy infrastructure 
+
 example:
 
 creating local file in /root/pets.txt with the following content: "we love pets"
