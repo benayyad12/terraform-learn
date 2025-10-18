@@ -1,77 +1,66 @@
 # terraform-learn
-terraform is an infrastructure as code tool
-used for provisionning infrastructure.
 
-It's a multicloud tool supporting different providers such as: GCP, AWS, AZURE and also Private cloud.
+Terraform is an infrustructure as code tool.
 
-Terraform uses HCL HarshiCorp Configuration Language which make it user friendly and more easier to work with.
+Terraform is used for provisioning infrastructure 
 
-Terraform communicates with different providers using API.
+Terraform is a multicloud tool that support different providers: AWS, AZURE and GCP...
 
-It's works in 3 steps:
+Terraform uses HCL (HashiCorp Configuration Language) which makes it more user friendly and easier to work with.
 
-Init (initialise terraform installing necessary plugins)
+It works in 3 steps:
 
-Plan (shows the plan to get to the desired state)
+init (initialize terraform installing necessary plugins)
 
-Apply (apply changes when user type "yes" to confirm that)
+plan (Terraform shows the plan to get to the desired state)
+
+apply (Applyc changes after confirmation of the desired state)
 
 Terraform commands:
 
-terraform version => to see the used version example: v0.13.0
+terraform version => display current version (+provider's version)
 
-terraform plan => shows changes to get to the desired state
+Terraform init => initialize terraform by installing plugins to communicate with provider
 
-terraform apply => requires confirmation to make the changes 
+terraform plan => show the changes to get to the desired state
 
-terraform show => shows the created resource
+terraform apply => apply changes 
 
-terraform refresh => get current state
+terraform show => display resource created 
 
-terraform destroy => destroy infrastructure 
+terraform destroy => to delete infrastructure
 
-example:
+syntax:
 
-creating local file in /root/pets.txt with the following content: "we love pets"
+block parameters {
 
-Syntax:
-
-<block> <parameters> {
-
-       key1 = value1
-       
-       key2 = value2
-       
+         key1 = value1
+         
+         key2 = value2
 }
-real example:
+
+example:  
 
 resource "local_file" "pet" {
 
-       filename = "/root/pets.txt"
-       
-       content = "we love pets"
-       
+         filename = "/root/pets.txt"
+         
+         content = "We love pets!"
 }
 
-to update infrastructre using terraform:
+local_file = provider_resource
+
+resource name = "pet"
+
+to update config:
 
 resource "local_file" "pet" {
 
-       filename = "/root/pets.txt"
-       
-       content = "we love pets"
-       
-       file_permission = "0700"
-       
+      filename = "/root/pets.txt"
+      
+      content = "we love pets!"
+      
+      file_permission = "0700"
+      
 }
-
-then we run: terraform plan (to see plan to get to the desired state)
-
-terraform apply (the file will be deleted and recreated with the new permissions)
-
-
-to destroy completely the infrastructure:
-
-terraform destroy
-
 
