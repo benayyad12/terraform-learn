@@ -64,3 +64,23 @@ resource "local_file" "pet" {
       
 }
 
+Terraform Providers:
+
+OFFICIAL: AWS / AZURE / GCP
+
+PARTNER: BigIP (F5NW) and Digital Ocean
+
+COMMUNITY:  ucloud or active directory
+
+init => install plugins for provider
+
+hashicorp/local: used to locate the plugin of local provider in the hashicorp registry
+
+organizational namespace: hashicorp
+
+Type : local
+
+hostname: registry.terraform.io
+
+=> registry.terraform.io/hashicorp/local
+
