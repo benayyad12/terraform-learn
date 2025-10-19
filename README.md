@@ -345,7 +345,25 @@ we will see all output variables or specifically terraform output name-of-output
 
 example: terraform output pet-name 
 
+Example 2:  Output variable
 
+resource "local_file" "kodekloud" {
+
+       filename = "/root/kodekloud"
+       
+       content = "Welcome to KodeKloud"
+
+}
+
+output "welcome" {
+
+    value = local_file.kodekloud.content 
+
+}
+
+terraform output welcome 
+
+> Welcome to KodeKloud
     
 
 
