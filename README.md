@@ -365,5 +365,16 @@ terraform output welcome
 
 > Welcome to KodeKloud
     
+Terraform State:
+
+the terraform state file is a JSON file created by default after running : terraform apply => terraform.tfstate
+
+terraform show => to see the content of the tfstate file.
+
+this file is created by default under the configuration directory.
+
+thi file should be shared in remote storage space like s3 (AWS) or DynamoDB
+
+
 
 
