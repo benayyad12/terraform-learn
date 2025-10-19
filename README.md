@@ -215,8 +215,9 @@ filename="/root/pet.txt"
 
 or use *.auto.tfvars files.
 
+Also: when using file .tfvars you can use -var-file 
 
-
+NB: -var and -var-file have the highest priority
 
 
 
