@@ -283,9 +283,39 @@ resource "random_pet" "pet" {
 
 }
 
+example explicit dependency:
 
+resource "local_file" "whale" {
 
+     filename = "/root/whale"
+     
+     content = "whale"
 
+}
+
+resource "local_file" "krill" {
+
+     filename = "/root/krill"
+     
+     content = "krill"
+
+}
+
+we want to make whale depends on krill :
+
+resource "local_file" "whale" {
+
+     filename = "/root/whale"
+     
+     content = "whale"
+
+     depends_on = [ local_file.krill ]
+
+}
+
+now: krill local file will be created first then whale after.
+
+Implicit dependency:  use reference expression like => ${tls_private_key.pvtkey.private_key_pem} 
 
 
 
