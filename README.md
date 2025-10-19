@@ -84,3 +84,22 @@ hostname: registry.terraform.io
 
 => registry.terraform.io/hashicorp/local
 
+Multiple providers:
+
+example: random => random_per
+
+resource "random_pet" "my-pet" {
+
+      length = "1"
+
+      separator = "."
+
+      prefix = "Mr"
+
+  
+}
+
+it allows us to generate pet name.
+
+
+
