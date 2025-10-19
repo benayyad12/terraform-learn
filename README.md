@@ -215,6 +215,33 @@ filename="/root/pet.txt"
 
 or use *.auto.tfvars files.
 
+Resource Attribute:
+
+we can use attribute of other resource in different resource 
+
+example:
+
+resource "random_pet" "my-pet" {
+
+       prefix = var.prefix
+
+       length = var.length
+
+       separator = var.separator
+
+}
+
+if we want to use random_pet to generate a pet's name and passs it in the local_file's content we can:
+
+resource "local_file" "pet" {
+
+      filename = var.filename
+
+      content = "This is my pet: ${random_pet.my-pet.id}"
+
+}
+
+
 
 
 
