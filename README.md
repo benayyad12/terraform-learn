@@ -14,7 +14,7 @@ init (initialize terraform installing necessary plugins)
 
 plan (Terraform shows the plan to get to the desired state)
 
-apply (Applyc changes after confirmation of the desired state)
+apply (Apply changes after confirmation of the desired state)
 
 Terraform commands:
 
