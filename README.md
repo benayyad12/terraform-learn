@@ -341,7 +341,11 @@ output "pet-name" {
 
 if we execute: terraform output
 
-we will see all output variables
+we will see all output variables or specifically terraform output name-of-output-variable
+
+example: terraform output pet-name 
+
+
     
 
 
