@@ -241,6 +241,48 @@ resource "local_file" "pet" {
 
 }
 
+Resource Dependencies:
+
+2 types:
+
+Implicit Dependency: 
+
+when you use Resource attribute (terraform will create random_pet.pet.id before local_file because we need to generate pet's name (id) and put it in the content )
+
+this called implicit 
+
+When we destroy: terraform destroy
+
+terraform will delete: local_file => then random_pet
+
+Explicit Dependency:
+
+example:
+
+resource "local_file" "my-pet" {
+
+      filename = var.filename
+
+      content = "My pet is Mr.Tom"
+
+      depends_on = [
+
+          random_pet.pet
+          
+          ]
+
+}
+
+resource "random_pet" "pet" {
+
+      length = var.length
+
+      prefix = var.prefix 
+
+      separator = var.separator
+
+}
+
 
 
 
