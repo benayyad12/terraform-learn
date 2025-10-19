@@ -101,5 +101,90 @@ resource "random_pet" "my-pet" {
 
 it allows us to generate pet name.
 
+Use input Variables => hardcoding variables is not a good idea 
+
+example of using input variables:
+
+resource "local_file" "pet" {
+
+      content = "I love pet!"
+
+      filename = "/root/pet.txt"
+
+}
+
+declare variables:
+
+variable "filename" {
+
+    default = "/root/pet.txt"
+
+}
+
+variable "content" {
+
+     default = "I love pet!"
+
+}
+
+to use these vars:
+
+resource "local_file" "pet" {
+
+    filename = var.filename
+
+    content = var.content
+
+}
+
+variable types:
+
+bool
+
+numeric
+
+map 
+
+list
+
+string
+
+tuple
+
+set 
+
+object
+
+=>
+
+to declare variable:
+
+variable "name-of-variable" {
+
+      default = 
+
+      type = 
+
+      description =
+
+}
+
+exemple with list:
+
+variable "prefix" {
+
+     default = ["Mr", "Mrs", Sir"]
+     
+     type = list(string)
+
+}
+      
+
+resource "random_pet" "my-pet" {
+
+      prefix = var.prefix[0] 
+
+}
+
 
 
