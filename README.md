@@ -1,8 +1,8 @@
-## terraform-learn
+# terraform-learn
 
 Terraform is an infrustructure as code tool.
 
-Terraform is used for provisioning infrastructure
+Terraform is used for provisioning infrastructure 
 
 Terraform is a multicloud tool that support different providers: AWS, AZURE and GCP...
 
@@ -24,9 +24,9 @@ Terraform init => initialize terraform by installing plugins to communicate with
 
 terraform plan => show the changes to get to the desired state
 
-terraform apply => apply changes
+terraform apply => apply changes 
 
-terraform show => display resource created
+terraform show => display resource created 
 
 terraform destroy => to delete infrastructure
 
@@ -34,18 +34,18 @@ syntax:
 
 block parameters {
 
-     key1 = value1
-     
-     key2 = value2
+         key1 = value1
+         
+         key2 = value2
 }
 
-example:
+example:  
 
 resource "local_file" "pet" {
 
-     filename = "/root/pets.txt"
-     
-     content = "We love pets!"
+         filename = "/root/pets.txt"
+         
+         content = "We love pets!"
 }
 
 local_file = provider_resource
@@ -56,11 +56,12 @@ to update config:
 
 resource "local_file" "pet" {
 
-  filename = "/root/pets.txt"
-  
-  content = "we love pets!"
-  
-  file_permission = "0700"
+      filename = "/root/pets.txt"
+      
+      content = "we love pets!"
+      
+      file_permission = "0700"
+      
 }
 
 Terraform Providers:
@@ -69,7 +70,7 @@ OFFICIAL: AWS / AZURE / GCP
 
 PARTNER: BigIP (F5NW) and Digital Ocean
 
-COMMUNITY: ucloud or active directory
+COMMUNITY:  ucloud or active directory
 
 init => install plugins for provider
 
@@ -89,45 +90,51 @@ example: random => random_per
 
 resource "random_pet" "my-pet" {
 
-  length = "1"
+      length = "1"
 
-  separator = "."
+      separator = "."
 
-  prefix = "Mr"
+      prefix = "Mr"
+
+  
 }
 
 it allows us to generate pet name.
 
-Use input Variables => hardcoding variables is not a good idea
+Use input Variables => hardcoding variables is not a good idea 
 
 example of using input variables:
 
 resource "local_file" "pet" {
 
-  content = "I love pet!"
+      content = "I love pet!"
 
-  filename = "/root/pet.txt"
+      filename = "/root/pet.txt"
+
 }
 
 declare variables:
 
 variable "filename" {
 
-default = "/root/pet.txt"
+    default = "/root/pet.txt"
+
 }
 
 variable "content" {
 
- default = "I love pet!"
+     default = "I love pet!"
+
 }
 
 to use these vars:
 
 resource "local_file" "pet" {
 
-filename = var.filename
+    filename = var.filename
 
-content = var.content
+    content = var.content
+
 }
 
 variable types:
@@ -136,7 +143,7 @@ bool
 
 numeric
 
-map
+map 
 
 list
 
@@ -144,7 +151,7 @@ string
 
 tuple
 
-set
+set 
 
 object
 
@@ -154,25 +161,29 @@ to declare variable:
 
 variable "name-of-variable" {
 
-  default = 
+      default = 
 
-  type = 
+      type = 
 
-  description =
+      description =
+
 }
 
 exemple with list:
 
 variable "prefix" {
 
- default = ["Mr", "Mrs", Sir"]
- 
- type = list(string)
+     default = ["Mr", "Mrs", Sir"]
+     
+     type = list(string)
+
 }
+      
 
 resource "random_pet" "my-pet" {
 
-  prefix = var.prefix[0] 
+      prefix = var.prefix[0] 
+
 }
 
 How to use variables without default:
@@ -181,7 +192,10 @@ when you declare a variable keep it empty (default/type/description)
 
 variable "filename" {
 
+    
+
 }
+
 
 Terraform will ask you to enter a value of the variable through the console
 
@@ -201,6 +215,9 @@ filename="/root/pet.txt"
 
 or use *.auto.tfvars files.
 
-Also: when using file .tfvars you can use -var-file
 
-NB: -var and -var-file have the highest priority
+
+
+
+
+
