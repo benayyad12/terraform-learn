@@ -186,5 +186,38 @@ resource "random_pet" "my-pet" {
 
 }
 
+How to use variables without default:
+
+when you declare a variable keep it empty (default/type/description)
+
+variable "filename" {
+
+    
+
+}
+
+
+Terraform will ask you to enter a value of the variable through the console
+
+or you have other options:
+
+Export variables:
+
+export TF_VAR_filename = "/root/pet.txt"
+
+Use -var flag:
+
+terraform apply -var filename="/root/pet.txt"
+
+Use files terraform.tfvars:
+
+filename="/root/pet.txt"
+
+or use *.auto.tfvars files.
+
+
+
+
+
 
 
