@@ -1,0 +1,126 @@
+# Pipeline Terraform multi-environnements : d (dev), int, uat, prd.
+#
+# Variables à définir dans GitLab : Group > Settings > CI/CD > Variables
+# (utiliser l'"environment scope" d / int / uat / prd pour avoir des valeurs par environnement) :
+#   TF_VAR_image          -> image/AMI/version déployée pour l'environnement
+#   TF_VAR_instance_type  -> (optionnel) taille
+#   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION (masquées/protégées)
+# Le state est stocké dans le backend HTTP GitLab-managed Terraform state (un state par environnement).
+
+stages:
+  - validate
+  - plan
+  - apply
+
+variables:
+  TF_ROOT: ${CI_PROJECT_DIR}/terraform
+  TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state
+
+default:
+  image:
+    name: hashicorp/terraform:1.9
+    entrypoint: [""]
+  before_script:
+    - cd "${TF_ROOT}"
+    - export TF_HTTP_ADDRESS="${TF_ADDRESS}/${TF_ENV}"
+    - export TF_HTTP_LOCK_ADDRESS="${TF_HTTP_ADDRESS}/lock"
+    - export TF_HTTP_UNLOCK_ADDRESS="${TF_HTTP_ADDRESS}/lock"
+    - export TF_HTTP_USERNAME="gitlab-ci-token"
+    - export TF_HTTP_PASSWORD="${CI_JOB_TOKEN}"
+    - export TF_HTTP_LOCK_METHOD=POST
+    - export TF_HTTP_UNLOCK_METHOD=DELETE
+    - export TF_VAR_environment="${TF_ENV}"
+    - terraform init -input=false
+
+validate:
+  stage: validate
+  variables:
+    TF_ENV: d
+  script:
+    - terraform fmt -check -recursive
+    - terraform validate
+
+.plan:
+  stage: plan
+  script:
+    - terraform plan -input=false -out=plan.tfplan
+  artifacts:
+    paths:
+      - terraform/plan.tfplan
+
+.apply:
+  stage: apply
+  script:
+    - terraform apply -input=false plan.tfplan
+  # le plan est repris de l'artefact du job plan correspondant
+
+# ---- d (dev) : automatique sur les branches hors main ----
+plan:d:
+  extends: .plan
+  variables: { TF_ENV: d }
+  environment: { name: d, action: prepare }
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
+apply:d:
+  extends: .apply
+  variables: { TF_ENV: d }
+  environment: { name: d }
+  needs: ["plan:d"]
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# ---- int : automatique sur main ----
+plan:int:
+  extends: .plan
+  variables: { TF_ENV: int }
+  environment: { name: int, action: prepare }
+  needs: ["apply:d"]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+apply:int:
+  extends: .apply
+  variables: { TF_ENV: int }
+  environment: { name: int }
+  needs: ["plan:int"]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# ---- uat : manuel sur main ----
+plan:uat:
+  extends: .plan
+  variables: { TF_ENV: uat }
+  environment: { name: uat, action: prepare }
+  needs: ["apply:int"]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+apply:uat:
+  extends: .apply
+  variables: { TF_ENV: uat }
+  environment: { name: uat }
+  needs: ["plan:uat"]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+
+# ---- prd : manuel sur tag (ou main) après uat ----
+plan:prd:
+  extends: .plan
+  variables: { TF_ENV: prd }
+  environment: { name: prd, action: prepare }
+  needs: ["apply:uat"]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+apply:prd:
+  extends: .apply
+  variables: { TF_ENV: prd }
+  environment: { name: prd }
+  needs: ["plan:prd"]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual

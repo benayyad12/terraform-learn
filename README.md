@@ -378,3 +378,10 @@ thi file should be shared in remote storage space like s3 (AWS) or DynamoDB
 
 
 
+
+## GitLab CI/CD multi-environnements
+
+`.gitlab-ci.yml` déploie le dossier `terraform/` vers `d` (dev), `int` (intégration), `uat` et `prd`.
+Définir dans Group > Settings > CI/CD > Variables, avec l'*environment scope* `d`, `int`, `uat`, `prd`,
+les variables `TF_VAR_image` (image par environnement) et les credentials cloud.
+Flux : branches -> d ; main -> d, int, puis uat et prd en manuel.
