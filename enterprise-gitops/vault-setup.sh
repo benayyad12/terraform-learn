@@ -11,4 +11,4 @@ path "secret/data/demo-app/*" { capabilities = ["read"] }
 P
 vault write auth/kubernetes/role/demo-app \
   bound_service_account_names=demo-app \
-  bound_service_account_namespaces=demo-dev,demo-prod policies=demo-app ttl=1h
+  bound_service_account_X policies=demo-app ttl=1h
