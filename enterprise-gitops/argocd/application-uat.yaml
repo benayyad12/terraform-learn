@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-app-uat
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/benayyad12/terraform-learn.git
+    targetRevision: main
+    path: enterprise-gitops/k8s/overlays/uat
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo-uat
+  syncPolicy:
+    automated: {prune: true, selfHeal: false}
+    syncOptions: [CreateNamespace=true]

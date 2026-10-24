@@ -1,0 +1,8 @@
+namespace: demo-prod
+resources: [../../base]
+replicas:
+  - name: demo-app
+    count: 3
+images:
+  - name: mycompany.jfrog.io/docker-local/demo-app
+    newTag: latest

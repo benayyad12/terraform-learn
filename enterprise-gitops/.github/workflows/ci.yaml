@@ -1,0 +1,45 @@
+# Copy to the repo root .github/workflows/ to activate (GitHub only reads workflows there).
+name: ci
+on:
+  push:
+    branches: [main]
+    paths: ["enterprise-gitops/app/**"]
+env:
+  IMAGE: mycompany.jfrog.io/docker-local/demo-app
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: {contents: write, id-token: write}
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: SonarQube scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        with: {projectBaseDir: enterprise-gitops}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: SonarQube quality gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env: {SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}", SONAR_HOST_URL: "${{ secrets.SONAR_HOST_URL }}"}
+      - name: Read JFrog creds from Vault
+        uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: jwt
+          role: ci
+          secrets: |
+            secret/data/ci/jfrog username | JFROG_USER ;
+            secret/data/ci/jfrog password | JFROG_PASSWORD
+      - name: Build and push to JFrog Artifactory
+        run: |
+          echo "$JFROG_PASSWORD" | docker login mycompany.jfrog.io -u "$JFROG_USER" --password-stdin
+          docker build -t $IMAGE:${GITHUB_SHA::8} enterprise-gitops/app
+          docker push $IMAGE:${GITHUB_SHA::8}
+      - name: Update GitOps manifest (ArgoCD syncs it)
+        run: |
+          cd enterprise-gitops/k8s/overlays/dev
+          sed -i "s/newTag: .*/newTag: ${GITHUB_SHA::8}/" kustomization.yaml
+          git config user.name ci; git config user.email ci@example.com
+          git commit -am "deploy demo-app ${GITHUB_SHA::8}" && git push

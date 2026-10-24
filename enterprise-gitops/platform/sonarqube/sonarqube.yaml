@@ -1,0 +1,33 @@
+# Minimal SonarQube Community (embedded H2 DB: demo only, use PostgreSQL in production)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sonarqube
+spec:
+  serviceName: sonarqube
+  replicas: 1
+  selector:
+    matchLabels: {app: sonarqube}
+  template:
+    metadata:
+      labels: {app: sonarqube}
+    spec:
+      containers:
+        - name: sonarqube
+          image: sonarqube:community
+          ports: [{containerPort: 9000}]
+          volumeMounts:
+            - {name: data, mountPath: /opt/sonarqube/data}
+  volumeClaimTemplates:
+    - metadata: {name: data}
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: {requests: {storage: 10Gi}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarqube
+spec:
+  selector: {app: sonarqube}
+  ports: [{port: 9000}]
